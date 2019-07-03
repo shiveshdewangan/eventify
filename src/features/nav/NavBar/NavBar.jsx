@@ -33,7 +33,7 @@ class NavBar extends Component {
             <img src='/assets/logo.png' alt='logo' />
             Eventify
           </Menu.Item>
-          <Menu.Item as={NavLink} to='/events' name='Events' />
+          <Menu.Item as={NavLink} exact to='/events' name='Events' />
           <Menu.Item as={NavLink} to='/people' name='People' />
           <Menu.Item>
             <Button
