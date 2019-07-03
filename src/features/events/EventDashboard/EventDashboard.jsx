@@ -1,15 +1,23 @@
 import React, { Component } from "react";
 import { Grid, Button } from "semantic-ui-react";
+import { connect } from "react-redux";
 import EventList from "../EventList/EventList";
 import EventForm from "../EventForm/EventForm";
-import { eventsData } from "../../../data/eventsData";
 import cuid from "cuid";
+import { createEvent, updateEvent, deleteEvent } from "../eventActions";
 
-const eventsFromDashboard = eventsData;
+const mapState = state => ({
+  events: state.events
+});
+
+const actions = {
+  createEvent,
+  updateEvent,
+  deleteEvent
+};
 
 class EventDashboard extends Component {
   state = {
-    events: eventsFromDashboard,
     isOpen: false,
     selectedEvent: null
   };
@@ -30,8 +38,8 @@ class EventDashboard extends Component {
   handleCreateEvent = newEvent => {
     newEvent.id = cuid();
     newEvent.hostPhotoURL = "/assets/user.png";
+    this.props.createEvent(newEvent);
     this.setState(({ events }) => ({
-      events: [...events, newEvent],
       isOpen: false
     }));
     console.log("this.state", this.state);
@@ -45,29 +53,20 @@ class EventDashboard extends Component {
   };
 
   handleUpdateEvent = updatedEvent => {
+    this.props.updateEvent(updatedEvent);
     this.setState(({ events }) => ({
-      events: events.map(event => {
-        if (event.id === updatedEvent.id) {
-          return {
-            ...updatedEvent
-          };
-        } else {
-          return event;
-        }
-      }),
       isOpen: false,
       selectedEvent: null
     }));
   };
 
   handleDeleteEvent = id => {
-    this.setState(({ events }) => ({
-      events: events.filter(event => event.id !== id)
-    }));
+    this.props.deleteEvent(id);
   };
 
   render() {
-    const { events, isOpen, selectedEvent } = this.state;
+    const { isOpen, selectedEvent } = this.state;
+    const { events } = this.props;
 
     return (
       <Grid>
@@ -99,4 +98,7 @@ class EventDashboard extends Component {
   }
 }
 
-export default EventDashboard;
+export default connect(
+  mapState,
+  actions
+)(EventDashboard);
